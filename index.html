@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SkyPort | Airport Management System</title>
+
+  <link rel="stylesheet" href="style.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+
+<body>
+
+  <aside class="sidebar" id="sidebar">
+
+    <a class="brand" href="#">
+      <span class="brand-icon">
+        <i class="fa-solid fa-plane-departure"></i>
+      </span>
+      <span>Sky<span class="brand-accent">Port</span>
+        <small>AIRPORT OPERATIONS</small>
+      </span>
+    </a>
+
+    <div class="side-label">WORKSPACE</div>
+
+    <nav id="navigation">
+      <button class="nav-link active" data-page="dashboard">
+        <i class="fa-solid fa-chart-pie"></i> Dashboard
+      </button>
+
+      <button class="nav-link" data-page="flights">
+        <i class="fa-solid fa-plane"></i> Flight operations
+      </button>
+
+      <button class="nav-link" data-page="passengers">
+        <i class="fa-solid fa-users"></i> Passengers
+      </button>
+
+      <button class="nav-link" data-page="tickets">
+        <i class="fa-solid fa-ticket"></i> Ticket management
+      </button>
+
+      <button class="nav-link" data-page="baggage">
+        <i class="fa-solid fa-suitcase-rolling"></i> Baggage & security
+      </button>
+
+      <button class="nav-link" data-page="facilities">
+        <i class="fa-solid fa-couch"></i> Lounges & facilities
+      </button>
+
+      <button class="nav-link" data-page="staff">
+        <i class="fa-solid fa-id-badge"></i> Staff management
+      </button>
+
+      <button class="nav-link" data-page="incidents">
+        <i class="fa-solid fa-shield-halved"></i> Incidents
+      </button>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <div class="support-card">
+        <i class="fa-solid fa-headset"></i>
+        <b>Operations support</b>
+        <span>Need help with airport operations?</span>
+        <button onclick="showToast('Support desk: support@skyport.demo')">
+          Contact support
+        </button>
+      </div>
+
+      <div class="profile">
+        <div class="avatar">AD</div>
+        <div>
+          <b>Admin Desk</b>
+          <small>Airport administrator</small>
+        </div>
+        <i class="fa-solid fa-ellipsis"></i>
+      </div>
+    </div>
+
+  </aside>
+
+  <main class="main">
+
+    <header class="topbar">
+
+      <button class="icon-btn mobile-menu" id="menuToggle">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+
+      <div>
+        <span class="eyebrow">AIRPORT CONTROL CENTER</span>
+        <h1 id="pageTitle">Dashboard overview</h1>
+      </div>
+
+      <div class="top-actions">
+        <div class="live-pill">
+          <span></span> System operational
+        </div>
+
+        <button class="icon-btn" id="notificationBtn">
+          <i class="fa-regular fa-bell"></i>
+          <i class="notification-dot"></i>
+        </button>
+
+        <div class="today" id="today"></div>
+      </div>
+
+    </header>
+
+    <!-- DASHBOARD -->
+
+    <section class="page active" id="page-dashboard">
+
+      <div class="welcome-row">
+        <div>
+          <h2>Good day, Admin <span>✈</span></h2>
+          <p>Here’s what’s happening across your airport today.</p>
+        </div>
+
+        <button class="primary-btn" onclick="openModal('flightModal')">
+          <i class="fa-solid fa-plus"></i> Add flight
+        </button>
+      </div>
+
+      <div class="stats-grid">
+
+        <article class="stat-card">
+          <div class="stat-top">
+            <span>Total flights</span>
+            <i class="fa-solid fa-plane"></i>
+          </div>
+          <strong id="statFlights">0</strong>
+          <small class="positive">Scheduled operations</small>
+        </article>
+
+        <article class="stat-card">
+          <div class="stat-top">
+            <span>Passengers today</span>
+            <i class="fa-solid fa-users"></i>
+          </div>
+          <strong id="statPassengers">0</strong>
+          <small class="positive">Registered passengers</small>
+        </article>
+
+        <article class="stat-card">
+          <div class="stat-top">
+            <span>On-time flights</span>
+            <i class="fa-solid fa-clock"></i>
+          </div>
+          <strong id="statOnTime">0%</strong>
+          <small class="positive">Current schedule status</small>
+        </article>
+
+        <article class="stat-card">
+          <div class="stat-top">
+            <span>Open incidents</span>
+            <i class="fa-solid fa-triangle-exclamation"></i>
+          </div>
+          <strong id="statIncidents">0</strong>
+          <small class="warning">Requires attention</small>
+        </article>
+
+      </div>
+
+      <div class="content-grid">
+
+        <section class="panel wide-panel">
+
+          <div class="panel-heading">
+            <div>
+              <h3>Flight activity</h3>
+              <p>Upcoming arrivals and departures</p>
+            </div>
+
+            <button class="text-btn" onclick="navigate('flights')">
+              View all <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>FLIGHT</th>
+                  <th>ROUTE</th>
+                  <th>TIME</th>
+                  <th>GATE</th>
+                  <th>STATUS</th>
+                </tr>
+              </thead>
+              <tbody id="dashboardFlights"></tbody>
+            </table>
+          </div>
+
+        </section>
+
+        <section class="panel">
+
+          <div class="panel-heading">
+            <div>
+              <h3>Terminal snapshot</h3>
+              <p>Facility utilization</p>
+            </div>
+            <i class="fa-solid fa-building-circle-check muted-icon"></i>
+          </div>
+
+          <div class="facility-meter">
+            <div class="meter-label">
+              <span>Terminal occupancy</span>
+              <b>72%</b>
+            </div>
+            <div class="meter">
+              <span style="width:72%"></span>
+            </div>
+          </div>
+
+          <div class="facility-meter">
+            <div class="meter-label">
+              <span>Lounge capacity</span>
+              <b id="loungePercent">58%</b>
+            </div>
+            <div class="meter">
+              <span class="meter-green" id="loungeMeter" style="width:58%"></span>
+            </div>
+          </div>
+
+          <div class="mini-info">
+            <span>Active gates</span>
+            <b>18 / 24</b>
+          </div>
+
+          <div class="mini-info">
+            <span>Bags being tracked</span>
+            <b id="bagCount">0</b>
+          </div>
+
+        </section>
+
+      </div>
+
+      <div class="content-grid lower-grid">
+
+        <section class="panel">
+          <div class="panel-heading">
+            <div>
+              <h3>Recent activity</h3>
+              <p>Latest airport updates</p>
+            </div>
+          </div>
+
+          <div class="activity-list" id="activityList"></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-heading">
+            <div>
+              <h3>Quick actions</h3>
+              <p>Common operations</p>
+            </div>
+          </div>
+
+          <div class="quick-actions">
+            <button onclick="navigate('passengers')">
+              <i class="fa-solid fa-user-plus"></i>
+              <span>Passenger check-in</span>
+            </button>
+
+            <button onclick="navigate('tickets')">
+              <i class="fa-solid fa-ticket"></i>
+              <span>Manage tickets</span>
+            </button>
+
+            <button onclick="navigate('baggage')">
+              <i class="fa-solid fa-shield-halved"></i>
+              <span>Security screening</span>
+            </button>
+
+            <button onclick="navigate('incidents')">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+              <span>Report incident</span>
+            </button>
+          </div>
+        </section>
+
+      </div>
+
+    </section>
+
+    <!-- FLIGHT OPERATIONS -->
+
+    <section class="page" id="page-flights">
+
+      <div class="section-intro">
+        <div>
+          <h2>Flight operations</h2>
+          <p>Monitor arrivals, departures, gates and flight status.</p>
+        </div>
+
+        <button class="primary-btn" onclick="openModal('flightModal')">
+          <i class="fa-solid fa-plus"></i> Add flight
+        </button>
+      </div>
+
+      <div class="toolbar">
+        <div class="search-box">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input id="flightSearch" placeholder="Search flight, airline or destination...">
+        </div>
+
+        <select id="flightFilter">
+          <option value="all">All statuses</option>
+          <option>On time</option>
+          <option>Delayed</option>
+          <option>Boarding</option>
+          <option>Cancelled</option>
+          <option>Landed</option>
+        </select>
+      </div>
+
+      <section class="panel">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>FLIGHT</th>
+                <th>AIRLINE</th>
+                <th>ROUTE</th>
+                <th>TYPE</th>
+                <th>TIME</th>
+                <th>GATE</th>
+                <th>ALTITUDE</th>
+                <th>STATUS</th>
+                <th>ACTION</th>
+              </tr>
+            </thead>
+            <tbody id="flightTable"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <p class="note">
+        Flight times, altitude and landing details are sample data, not live aviation feeds.
+      </p>
+
+    </section>
+
+    <!-- PASSENGERS -->
+
+    <section class="page" id="page-passengers">
+
+      <div class="section-intro">
+        <div>
+          <h2>Passenger management</h2>
+          <p>Passenger records, check-in and boarding status.</p>
+        </div>
+
+        <button class="primary-btn" onclick="openModal('passengerModal')">
+          <i class="fa-solid fa-user-plus"></i> Add passenger
+        </button>
+      </div>
+
+      <div class="toolbar">
+        <div class="search-box">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input id="passengerSearch" placeholder="Search passenger or booking ID...">
+        </div>
+
+        <select id="passengerFilter">
+          <option value="all">All passengers</option>
+          <option>Checked in</option>
+          <option>Not checked in</option>
+          <option>Boarded</option>
+        </select>
+      </div>
+
+      <section class="panel">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>PASSENGER</th>
+                <th>BOOKING ID</th>
+                <th>FLIGHT</th>
+                <th>SEAT</th>
+                <th>CHECK-IN</th>
+                <th>STATUS</th>
+                <th>ACTION</th>
+              </tr>
+            </thead>
+            <tbody id="passengerTable"></tbody>
+          </table>
+        </div>
+      </section>
+
+    </section>
+
+    <!-- TICKET MANAGEMENT -->
+
+    <section class="page" id="page-tickets">
+
+      <div class="section-intro">
+        <div>
+          <h2>Ticket management</h2>
+          <p>Create bookings, look up tickets and manage cancellations.</p>
+        </div>
+
+        <button class="primary-btn" onclick="openModal('ticketModal')">
+          <i class="fa-solid fa-plus"></i> Book ticket
+        </button>
+      </div>
+
+      <div class="stats-grid compact-stats">
+
+        <article class="stat-card">
+          <div class="stat-top">
+            <span>Total bookings</span>
+            <i class="fa-solid fa-ticket"></i>
+          </div>
+          <strong id="ticketCount">0</strong>
+        </article>
+
+        <article class="stat-card">
+          <div class="stat-top">
+            <span>Confirmed</span>
+            <i class="fa-solid fa-circle-check"></i>
+          </div>
+          <strong id="confirmedCount">0</strong>
+        </article>
+
+        <article class="stat-card">
+          <div class="stat-top">
+            <span>Cancelled</span>
+            <i class="fa-solid fa-ban"></i>
+          </div>
+          <strong id="cancelledCount">0</strong>
+        </article>
+
+      </div>
+
+      <div class="toolbar">
+        <div class="search-box">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input id="ticketSearch" placeholder="Search booking ID or passenger...">
+        </div>
+      </div>
+
+      <section class="panel">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>BOOKING ID</th>
+                <th>PASSENGER</th>
+                <th>FLIGHT</th>
+                <th>DATE</th>
+                <th>FARE</th>
+                <th>STATUS</th>
+                <th>ACTION</th>
+              </tr>
+            </thead>
+            <tbody id="ticketTable"></tbody>
+          </table>
+        </div>
+      </section>
+
+    </section>
+
+    <!-- BAGGAGE AND SECURITY -->
+
+    <section class="page" id="page-baggage">
+
+      <div class="section-intro">
+        <div>
+          <h2>Baggage & security</h2>
+          <p>Track luggage and record screening outcomes.</p>
+        </div>
+
+        <button class="primary-btn" onclick="openModal('bagModal')">
+          <i class="fa-solid fa-plus"></i> Register baggage
+        </button>
+      </div>
+
+      <div class="content-grid">
+
+        <section class="panel">
+          <div class="panel-heading">
+            <div>
+              <h3>Baggage tracking</h3>
+              <p>Search by baggage tag or passenger</p>
+            </div>
+          </div>
+
+          <div class="search-box full-search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input id="bagSearch" placeholder="Search baggage tag...">
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>BAG TAG</th>
+                  <th>PASSENGER</th>
+                  <th>FLIGHT</th>
+                  <th>WEIGHT</th>
+                  <th>STATUS</th>
+                </tr>
+              </thead>
+              <tbody id="bagTable"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="panel security-panel">
+          <div class="panel-heading">
+            <div>
+              <h3>Security screening</h3>
+              <p>Demo screening record</p>
+            </div>
+            <i class="fa-solid fa-shield-halved muted-icon"></i>
+          </div>
+
+          <div class="security-symbol">
+            <i class="fa-solid fa-shield-halved"></i>
+          </div>
+
+          <p class="security-copy">
+            Record a simulated screening result for training and demonstration purposes.
+          </p>
+
+          <label>
+            Passenger / bag reference
+            <input id="screenRef" placeholder="e.g. BG-1004">
+          </label>
+
+          <label>
+            Screening result
+            <select id="screenResult">
+              <option>Cleared</option>
+              <option>Manual inspection required</option>
+              <option>Flagged for review</option>
+            </select>
+          </label>
+
+          <button class="primary-btn full-btn" id="screenBtn">
+            Save screening result
+          </button>
+
+          <p class="disclaimer">
+            This is not real AI detection or an airport security system. Actual screening must be performed by authorized personnel and approved equipment.
+          </p>
+        </section>
+
+      </div>
+
+    </section>
+
+    <!-- LOUNGES AND FACILITIES -->
+
+    <section class="page" id="page-facilities">
+
+      <div class="section-intro">
+        <div>
+          <h2>Lounges & facilities</h2>
+          <p>Monitor passenger amenities and available capacity.</p>
+        </div>
+      </div>
+
+      <div class="facility-grid" id="facilityGrid"></div>
+
+      <section class="panel facility-info">
+        <div class="panel-heading">
+          <div>
+            <h3>Passenger services</h3>
+            <p>Services available across the terminal</p>
+          </div>
+        </div>
+
+        <div class="service-grid">
+          <div>
+            <i class="fa-solid fa-wifi"></i>
+            <b>Free Wi-Fi</b>
+            <span>Terminal-wide access</span>
+          </div>
+
+          <div>
+            <i class="fa-solid fa-utensils"></i>
+            <b>Dining</b>
+            <span>Food court and cafés</span>
+          </div>
+
+          <div>
+            <i class="fa-solid fa-wheelchair"></i>
+            <b>Accessibility</b>
+            <span>Assistance on request</span>
+          </div>
+
+          <div>
+            <i class="fa-solid fa-first-aid"></i>
+            <b>Medical help</b>
+            <span>First-aid station</span>
+          </div>
+        </div>
+      </section>
+
+    </section>
+
+    <!-- STAFF MANAGEMENT -->
+
+    <section class="page" id="page-staff">
+
+      <div class="section-intro">
+        <div>
+          <h2>Staff management</h2>
+          <p>View airport teams and their assigned departments.</p>
+        </div>
+
+        <button class="primary-btn" onclick="openModal('staffModal')">
+          <i class="fa-solid fa-plus"></i> Add staff
+        </button>
+      </div>
+
+      <section class="panel">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>STAFF MEMBER</th>
+                <th>EMPLOYEE ID</th>
+                <th>DEPARTMENT</th>
+                <th>SHIFT</th>
+                <th>STATUS</th>
+              </tr>
+            </thead>
+            <tbody id="staffTable"></tbody>
+          </table>
+        </div>
+      </section>
+
+    </section>
+
+    <!-- INCIDENT MANAGEMENT -->
+
+    <section class="page" id="page-incidents">
+
+      <div class="section-intro">
+        <div>
+          <h2>Incident management</h2>
+          <p>Log operational issues and follow their resolution.</p>
+        </div>
+
+        <button class="primary-btn" onclick="openModal('incidentModal')">
+          <i class="fa-solid fa-plus"></i> Report incident
+        </button>
+      </div>
+
+      <section class="panel">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>REFERENCE</th>
+                <th>INCIDENT</th>
+                <th>LOCATION</th>
+                <th>PRIORITY</th>
+                <th>REPORTED</th>
+                <th>STATUS</th>
+                <th>ACTION</th>
+              </tr>
+            </thead>
+            <tbody id="incidentTable"></tbody>
+          </table>
+        </div>
+      </section>
+
+    </section>
+
+    <footer>
+      © 2026 SkyPort Airport Management System
+      <span>Student project • Front-end demonstration</span>
+    </footer>
+
+  </main>
+
+  <!-- ADD FLIGHT MODAL -->
+
+  <div class="modal" id="flightModal">
+    <form class="modal-card" id="flightForm">
+
+      <div class="modal-head">
+        <div>
+          <h3>Add a flight</h3>
+          <p>Enter the flight schedule details.</p>
+        </div>
+        <button type="button" class="close-modal" data-close>&times;</button>
+      </div>
+
+      <div class="form-grid">
+        <label>Flight number
+          <input name="number" required placeholder="e.g. SP 240">
+        </label>
+
+        <label>Airline
+          <input name="airline" required placeholder="Airline name">
+        </label>
+
+        <label>Origin
+          <input name="origin" required placeholder="City">
+        </label>
+
+        <label>Destination
+          <input name="destination" required placeholder="City">
+        </label>
+
+        <label>Flight type
+          <select name="type">
+            <option>Departure</option>
+            <option>Arrival</option>
+          </select>
+        </label>
+
+        <label>Time
+          <input name="time" type="time" required>
+        </label>
+
+        <label>Gate
+          <input name="gate" required placeholder="A12">
+        </label>
+
+        <label>Status
+          <select name="status">
+            <option>On time</option>
+            <option>Delayed</option>
+            <option>Boarding</option>
+            <option>Cancelled</option>
+            <option>Landed</option>
+          </select>
+        </label>
+      </div>
+
+      <button class="primary-btn full-btn">Save flight</button>
+    </form>
+  </div>
+
+  <!-- ADD PASSENGER MODAL -->
+
+  <div class="modal" id="passengerModal">
+    <form class="modal-card" id="passengerForm">
+
+      <div class="modal-head">
+        <div>
+          <h3>Add passenger</h3>
+          <p>Create a passenger record.</p>
+        </div>
+        <button type="button" class="close-modal" data-close>&times;</button>
+      </div>
+
+      <div class="form-grid">
+        <label>Full name
+          <input name="name" required>
+        </label>
+
+        <label>Booking ID
+          <input name="booking" required placeholder="BK-1005">
+        </label>
+
+        <label>Flight number
+          <input name="flight" required placeholder="SP 240">
+        </label>
+
+        <label>Seat number
+          <input name="seat" placeholder="12A">
+        </label>
+
+        <label class="span-two">Email
+          <input name="email" type="email" placeholder="passenger@email.com">
+        </label>
+      </div>
+
+      <button class="primary-btn full-btn">Save passenger</button>
+    </form>
+  </div>
+
+  <!-- TICKET BOOKING MODAL -->
+
+  <div class="modal" id="ticketModal">
+    <form class="modal-card" id="ticketForm">
+
+      <div class="modal-head">
+        <div>
+          <h3>Book a ticket</h3>
+          <p>Create a sample ticket booking.</p>
+        </div>
+        <button type="button" class="close-modal" data-close>&times;</button>
+      </div>
+
+      <div class="form-grid">
+        <label>Passenger name
+          <input name="passenger" required>
+        </label>
+
+        <label>Flight number
+          <input name="flight" required>
+        </label>
+
+        <label>Travel date
+          <input name="date" type="date" required>
+        </label>
+
+        <label>Fare (₹)
+          <input name="fare" type="number" min="1" required>
+        </label>
+      </div>
+
+      <button class="primary-btn full-btn">Confirm booking</button>
+    </form>
+  </div>
+
+  <!-- BAGGAGE MODAL -->
+
+  <div class="modal" id="bagModal">
+    <form class="modal-card" id="bagForm">
+
+      <div class="modal-head">
+        <div>
+          <h3>Register baggage</h3>
+          <p>Add a bag to the tracking list.</p>
+        </div>
+        <button type="button" class="close-modal" data-close>&times;</button>
+      </div>
+
+      <div class="form-grid">
+        <label>Baggage tag
+          <input name="tag" required placeholder="BG-1005">
+        </label>
+
+        <label>Passenger
+          <input name="passenger" required>
+        </label>
+
+        <label>Flight
+          <input name="flight" required>
+        </label>
+
+        <label>Weight (kg)
+          <input name="weight" type="number" min="0.1" step="0.1" required>
+        </label>
+      </div>
+
+      <button class="primary-btn full-btn">Register baggage</button>
+    </form>
+  </div>
+
+  <!-- STAFF MODAL -->
+
+  <div class="modal" id="staffModal">
+    <form class="modal-card" id="staffForm">
+
+      <div class="modal-head">
+        <div>
+          <h3>Add staff member</h3>
+          <p>Register an airport employee.</p>
+        </div>
+        <button type="button" class="close-modal" data-close>&times;</button>
+      </div>
+
+      <div class="form-grid">
+        <label>Full name
+          <input name="name" required>
+        </label>
+
+        <label>Employee ID
+          <input name="id" required>
+        </label>
+
+        <label>Department
+          <input name="department" required>
+        </label>
+
+        <label>Shift
+          <select name="shift">
+            <option>Morning</option>
+            <option>Evening</option>
+            <option>Night</option>
+          </select>
+        </label>
+      </div>
+
+      <button class="primary-btn full-btn">Add staff</button>
+    </form>
+  </div>
+
+  <!-- INCIDENT MODAL -->
+
+  <div class="modal" id="incidentModal">
+    <form class="modal-card" id="incidentForm">
+
+      <div class="modal-head">
+        <div>
+          <h3>Report an incident</h3>
+          <p>Record an operational issue.</p>
+        </div>
+        <button type="button" class="close-modal" data-close>&times;</button>
+      </div>
+
+      <div class="form-grid">
+        <label class="span-two">Incident description
+          <input name="description" required placeholder="Describe the issue">
+        </label>
+
+        <label>Location
+          <input name="location" required placeholder="Terminal / Gate">
+        </label>
+
+        <label>Priority
+          <select name="priority">
+            <option>Low</option>
+            <option>Medium</option>
+            <option>High</option>
+          </select>
+        </label>
+      </div>
+
+      <button class="primary-btn full-btn">Submit report</button>
+    </form>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <!-- JavaScript connection -->
+  <script src="script.js"></script>
+
+</body>
+</html>
